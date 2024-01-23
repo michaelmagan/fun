@@ -9,21 +9,21 @@
         margin-top: 20px;
     }
 </style>
-    <div class="container mt-5">
-        <div class="form-group">
-            <label for="goal">Goal:</label>
-            <input type="number" class="form-control" id="goal" placeholder="Enter your goal" required>
-        </div>
-        <div class="form-group">
-            <label for="weeks">Weeks:</label>
-            <input type="number" class="form-control" id="weeks" placeholder="Enter number of weeks" required>
-        </div>
-        <button class="btn btn-primary" onclick="calculateDynamicGoal()">Calculate</button>
-        <div class="chart-container mt-4">
-            <canvas id="goalChart"></canvas>
-        </div>
-        <div class="goals-summary" id="goals-summary"></div>
+<div class="container mt-5">
+    <div class="form-group">
+        <label for="goal">Goal:</label>
+        <input type="number" class="form-control" id="goal" placeholder="Enter your goal" value="5731" required>
     </div>
+    <div class="form-group">
+        <label for="weeks">Weeks:</label>
+        <input type="number" class="form-control" id="weeks" placeholder="Enter number of weeks" value="10" required>
+    </div>
+    <button class="btn btn-primary" onclick="calculateDynamicGoal()">Calculate</button>
+    <div class="chart-container mt-4">
+        <canvas id="goalChart"></canvas>
+    </div>
+    <div class="goals-summary" id="goals-summary"></div>
+</div>
 
 <script>
     function calculateDynamicGoal() {
