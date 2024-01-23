@@ -1,0 +1,93 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    .chart-container {
+        height: 400px;
+        margin-top: 20px;
+    }
+    .goals-summary {
+        margin-top: 20px;
+    }
+</style>
+    <div class="container mt-5">
+        <h2>Dynamic Goal Calculator with Graph</h2>
+        <div class="form-group">
+            <label for="goal">Goal:</label>
+            <input type="number" class="form-control" id="goal" placeholder="Enter your goal" required>
+        </div>
+        <div class="form-group">
+            <label for="weeks">Weeks:</label>
+            <input type="number" class="form-control" id="weeks" placeholder="Enter number of weeks" required>
+        </div>
+        <button class="btn btn-primary" onclick="calculateDynamicGoal()">Calculate</button>
+        <div class="chart-container mt-4">
+            <canvas id="goalChart"></canvas>
+        </div>
+        <div class="goals-summary" id="goals-summary"></div>
+    </div>
+
+<script>
+    function calculateDynamicGoal() {
+    var goal = parseInt(document.getElementById('goal').value);
+    var weeks = parseInt(document.getElementById('weeks').value);
+    var goalsSummaryDiv = document.getElementById('goals-summary');
+    goalsSummaryDiv.innerHTML = ''; // Clear previous summary
+
+    if (weeks <= 0 || goal <= 0) {
+        goalsSummaryDiv.innerHTML = 'Please enter valid goal and weeks.';
+        return;
+    }
+
+    var labels = [];
+    var dataPoints = [];
+    var weeklyGoalsText = '<h4 class="mt-3">Weekly Goals:</h4><ul class="list-group">';
+
+    // Adjust the formula to ensure correct starting point and final goal achievement
+    var startingPoint = goal / Math.pow(2, weeks - 1);
+    var currentGoal = startingPoint;
+
+    for (var i = 0; i < weeks; i++) {
+        // Ensure the goal for the final week is exactly the goal value
+        if (i === weeks - 1) {
+            currentGoal = goal;
+        } else if (i > 0) {
+            currentGoal *= 2;
+        }
+
+        labels.push('Week ' + (i + 1));
+        var roundedGoal = Math.round(currentGoal);
+        dataPoints.push(roundedGoal);
+        weeklyGoalsText += '<li class="list-group-item">Week ' + (i + 1) + ': ' + roundedGoal.toLocaleString() + '</li>';
+    }
+    weeklyGoalsText += '</ul>';
+    goalsSummaryDiv.innerHTML = weeklyGoalsText;
+
+    var ctx = document.getElementById('goalChart').getContext('2d');
+    if (window.goalChart instanceof Chart) {
+        window.goalChart.destroy(); // Destroy the previous chart instance if exists
+    }
+    window.goalChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Weekly Goal',
+                backgroundColor: 'rgb(75, 192, 192)',
+                borderColor: 'rgb(75, 192, 192)',
+                data: dataPoints,
+                fill: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    }
+
+</script>
