@@ -1,0 +1,71 @@
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    .card {
+        margin-top: 20px;
+    }
+</style>
+
+<div class="input-group mb-3">
+  <input type="text" class="form-control" placeholder="search for a term" id="search-input">
+  <div class="input-group-append">
+    <button class="btn btn-outline-secondary" type="button" id="search-button" onclick="searchTerm()">search</button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <p class="card-text" id="random-term"></p>
+    <button class="btn btn-primary" id="generate-term" onclick="generateNewTerm()">new random term</button>
+  </div>
+  
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    generateNewTerm(); // Call the function on initial load
+  });
+
+  document.getElementById('search-input').addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+      searchTerm();
+    }
+  });
+
+  function searchTerm() {
+    var searchTerm = document.getElementById('search-input').value.trim().toLowerCase();
+    var sheetId = '1eoza_zu4HdrWMCohpl5vUsLJ9ijaDS0KazlxTrjwzy0';
+    var sheetAsJson = 'https://docs.google.com/spreadsheets/d/' + sheetId + '/gviz/tq?tqx=out:json';
+
+    fetch(sheetAsJson)
+      .then(response => response.text())
+      .then(data => {
+        var json = JSON.parse(data.substring(47).slice(0, -2));
+        var rows = json.table.rows;
+        var found = rows.find(row => row.c && row.c[0] && row.c[0].v.toLowerCase() === searchTerm);
+
+        if (found && found.c[1]) {
+          var term = found.c[0].v.toLowerCase();
+          var meaning = found.c[1].v.toLowerCase();
+          document.getElementById('random-term').innerHTML = '<div class="alert alert-info" role="alert"><strong>Term:</strong> ' + term + '</div><div class="alert alert-secondary" role="alert"><strong>Meaning:</strong> ' + meaning + '</div>';
+        } else {
+          document.getElementById('random-term').innerHTML = '<div class="alert alert-danger" role="alert">Not found: "' + searchTerm + '".</div>';
+        }
+      });
+  }
+
+  function generateNewTerm() {
+    var sheetId = '1eoza_zu4HdrWMCohpl5vUsLJ9ijaDS0KazlxTrjwzy0';
+    var sheetAsJson = 'https://docs.google.com/spreadsheets/d/' + sheetId + '/gviz/tq?tqx=out:json';
+
+    fetch(sheetAsJson)
+      .then(response => response.text())
+      .then(data => {
+        var json = JSON.parse(data.substring(47).slice(0, -2));
+        var rows = json.table.rows;
+        var randomIndex = Math.floor(Math.random() * rows.length);
+        var term = rows[randomIndex].c[0].v.toLowerCase();
+        var meaning = rows[randomIndex].c[1].v.toLowerCase();
+
+        document.getElementById('random-term').innerHTML = '<div class="alert alert-info" role="alert"><strong>Term:</strong> ' + term + '</div><div class="alert alert-secondary" role="alert"><strong>Meaning:</strong> ' + meaning + '</div>';
+      });
+  }
+</script>
